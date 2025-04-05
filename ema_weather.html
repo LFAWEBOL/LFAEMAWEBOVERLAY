@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Widget</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      position: relative;
+    }
+
+    .weather-container {
+      width: 350px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: absolute;
+      padding-left: 9px;
+      padding-right: 9px;
+    }
+
+    table th,
+    table td {
+      padding: 1px;
+      border-bottom: 1px solid transparent;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    table th {
+      font-size: 0.85rem;
+      color: #ffffff;
+    }
+
+    table td {
+      font-size: 0.95rem;
+    }
+
+    table th[colspan="3"] {
+      font-size: 1rem;
+      padding-bottom: 10px;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .weather-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .weather-info .direction-arrow {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 12px solid red;
+      transition: transform 0.3s ease;
+      margin-right: 10px; /* Space between the arrow and wind speed */
+    }
+
+    .weather-info .wind-speed {
+      font-size: 1rem;
+    }
+
+    .date-time {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: #ffffff;
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 1px;
+      padding: 5px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 5px;
+    }
+
+    .weather-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    #live-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: white; /* Default color for the text */
+      text-align: center;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #live-title span {
+      color: red; /* Only the word "LIVE" in red */
+    }
+
+    /* Adjusting the wind data column */
+    #wind {
+      text-align: center;
+    }
+
+    /* Adjusted padding for second and third rows */
+    table tr:nth-child(2) td, 
+    table tr:nth-child(3) td {
+      padding-left: 10px;
+      padding-right: 5px;
+    }
+
+    table td {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    /* Shift the word WIND slightly to the right */
+    th:nth-child(2) {
+      padding-left: 10px; /* Adjust this value to move the word "WIND" further */
+    }
+
+  </style>
+</head>
+<body>
+  <div class="weather-container">
+    <table>
+      <thead>
+        <tr>
+          <th colspan="3" id="live-title"><span>LIVE</span> EAST MIDLANDS AIRPORT</th> <!-- Only LIVE is in red -->
+        </tr>
+        <tr>
+          <th>TEMP</th>
+          <th id="wind-th">WIND</th> <!-- Added ID for the WIND column -->
+          <th>WEATHER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="temp"></td>
+          <td id="wind">
+            <div class="weather-info">
+              <div class="direction-arrow" id="direction-arrow"></div>
+              <div class="wind-speed">
+                <span id="wind-speed-value"></span> kts
+              </div>
+            </div>
+          </td>
+          <td id="condition">
+            <img id="weather-icon" class="weather-icon" src="" alt="Weather Icon"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="date-time" id="date-time"></div>
+
+  <script>
+    async function fetchWeatherData() {
+      const apiKey = '58301b9e3cb6cdfab0c2a0e6765e67d4';
+      const lat = 52.8317;
+      const lon = -1.3316;
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.cod === 200) {
+          const temperature = data.main.temp.toFixed(1);
+          const windSpeed = (data.wind.speed * 1.94384).toFixed(1);
+          const windDirection = data.wind.deg;
+          const condition = data.weather[0].description;
+          const iconCode = data.weather[0].icon;
+
+          // Set the temperature, wind speed, and weather condition
+          document.getElementById('temp').innerText = `${temperature}°C`;
+          document.getElementById('wind-speed-value').innerText = windSpeed;
+
+          // Set the wind direction arrow
+          const directionArrow = document.getElementById('direction-arrow');
+          const adjustedDirection = (windDirection + 180) % 360;
+          directionArrow.style.transform = `rotate(${adjustedDirection}deg)`;
+
+          // Set the weather icon
+          const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+          document.getElementById('weather-icon').src = iconUrl;
+
+        } else {
+          document.getElementById('temp').innerText = 'Error';
+          document.getElementById('wind').innerText = 'Error';
+          document.getElementById('condition').innerText = 'Error';
+        }
+      } catch (error) {
+        document.getElementById('temp').innerText = 'Error';
+        document.getElementById('wind').innerText = 'Error';
+        document.getElementById('condition').innerText = 'Error';
+      }
+    }
+
+    function updateDateTime() {
+      const options = { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Europe/London' 
+      };
+      const dateTime = new Date().toLocaleString('en-GB', options);
+      const [date, time] = dateTime.split(', ');
+      document.getElementById('date-time').innerText = `${date} ${time}`;
+    }
+
+    let messageIndex = 0;
+    const messages = [
+      "LIVE EAST MIDLANDS AIRPORT",  // Updated message
+      "WELCOME TO LIVE FLIGHT ACTION"
+    ];
+
+    function updateMessage() {
+      messageIndex = (messageIndex + 1) % messages.length;
+      document.querySelector('th[colspan="3"]').innerText = messages[messageIndex];
+    }
+
+    fetchWeatherData();
+    setInterval(fetchWeatherData, 1800000); // refresh every 30 minutes
+    setInterval(updateDateTime, 1000); // update date and time every second
+    setInterval(updateMessage, 5000); // change the message every 5 seconds
+  </script>
+</body>
+</html>
