@@ -18,12 +18,15 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      background-color: rgba(0, 0, 0, 0.8); /* Set background to black */
-      padding: 6px 12px;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 4px 12px;
       border-radius: 5px;
-      font-size: 1rem;
+      font-size: 1.125rem;
       font-weight: bold;
       letter-spacing: 1px;
+      height: 26px;
+      display: flex;
+      align-items: center;
     }
 
     #live-banner span {
@@ -35,11 +38,11 @@
       bottom: 0;
       width: 100%;
       background-color: rgba(0, 0, 0, 0.6);
-      padding: 6px 20px;
+      padding: 8px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.9rem;
+      font-size: 1.125rem;
       box-sizing: border-box;
     }
 
@@ -54,7 +57,16 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      height: 24px;
+      height: 30px;
+    }
+
+    .direction-arrow-wrapper {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .direction-arrow {
@@ -62,19 +74,20 @@
       height: 0;
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
-      border-bottom: 12px solid red;
-      margin-left: 3px;
-      margin-top: 2px;
+      border-bottom: 15px solid red;
+      transform-origin: center center;
       transition: transform 0.3s ease;
+      margin-left: 14px;
     }
 
     .weather-icon {
-      width: 24px;
-      height: 24px;
+      width: 30px;
+      height: 30px;
+      margin-left: 5px;
     }
 
     .time-display {
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: bold;
       white-space: nowrap;
       padding-left: 10px;
@@ -83,19 +96,23 @@
     .scrolling-column {
       flex: 2;
       overflow: hidden;
-      height: 24px;
+      height: 30px;
       position: relative;
     }
 
     .scrolling-banner {
       white-space: nowrap;
       color: white;
-      font-size: 0.9rem;
+      font-size: 1.125rem;
       font-weight: bold;
       animation: scroll-banner 120s linear infinite;
       position: absolute;
       will-change: transform;
-      line-height: 25px; /* Matches the container height */
+      line-height: 30px;
+    }
+
+    .scrolling-banner span {
+      margin-right: 40px;
     }
 
     @keyframes scroll-banner {
@@ -109,24 +126,31 @@
   </style>
 </head>
 <body>
-  <div id="live-banner"><span>LIVE</span> EAST MIDLANDS AIRPORT</div>
+  <div id="live-banner"><span>LIVE</span>&nbsp;EAST MIDLANDS AIRPORT</div>
   
   <div class="weather-bar">
     <div class="data-group">
       <div class="weather-section" id="temp-section">TEMP: <span id="temp"></span></div>
       <div class="weather-section" id="feels-section">FEELS: <span id="feels-like"></span></div>
       <div class="weather-section" id="weather-section">WEATHER: <img id="weather-icon" class="weather-icon" src="" alt="Icon"></div>
-      <div class="weather-section" id="wind-section">WIND: <span id="wind-speed"></span> <span id="wind-dir"></span><div class="direction-arrow" id="direction-arrow"></div></div>
-      <div class="weather-section" id="vis-section">VISIBILITY: <span id="visibility"></span></div>
+      <div class="weather-section" id="wind-section" style="margin-left: -10px;"> <!-- Adjusted margin here -->
+        WIND: <span id="wind-speed"></span>
+        <div class="direction-arrow-wrapper">
+          <div class="direction-arrow" id="direction-arrow"></div>
+        </div>
+      </div>
+      <div class="weather-section" id="vis-section">VIS: <span id="visibility"></span></div>
 
-      <!-- NEW scrolling banner column -->
       <div class="scrolling-column">
         <div class="scrolling-banner">
-          WELCOME TO LIVE FLIGHT ACTION! THANK YOU FOR TUNING IN TO TODAY’S STREAM — YOU’RE PART OF AN EPIC AVIATION JOURNEY!
-SUBSCRIBE NOW TO JOIN OUR GROWING CREW OF AVIATION ENTHUSIASTS!
-LIKE, SHARE & HIT THAT BELL TO STAY UP TO DATE WITH ALL OUR LIVE FLIGHT ACTION.
-WANT TO SUPPORT THE CHANNEL? CHECK OUT OUR MEMBERSHIPS & BUY ME A COFFEE ☕️ — LINKS ON OUR CHANNEL PAGE.
-AND DON’T FORGET TO FOLLOW @LIVEFLIGHTACTION ON TIKTOK, INSTAGRAM & FACEBOOK FOR MORE LIVE FLIGHT ACTION CONTENT! 
+          <span>WELCOME TO LIVE FLIGHT ACTION!</span>
+          <span>YOU’RE PART OF AN AMAZING AVIATION JOURNEY!</span>
+          <span style="color: red;">SUBSCRIBE</span>JOIN OUR GROWING COMMUNITY OF AVIATION ENTHUSIASTS!</span>
+          <span>REMEMBER TO LIKE, SHARE & HIT THAT NOTIFICATION BELL TO STAY UP TO DATE WITH ALL OF OUR LATEST UPDATES.</span>
+          <span>IF YOU'D LIKE TO SUPPORT THE CHANNEL FURTHER, CHECK OUT OUR MEMBERSHIP OPTIONS & BUY ME A COFFEE PAGE ☕️ - LINKS IN OUR CHANNEL BIO.</span>
+          <span>DON’T FORGET TO FOLLOW @LIVEFLIGHTACTION ON TIKTOK, INSTAGRAM & FACEBOOK FOR MORE LIVE FLIGHT ACTION CONTENT!</span>
+          <span>A SPECIAL THANK YOU TO ALL OF OUR FREQUENT FLYER AND BOARDING PASS MEMBERS FOR YOUR CONTINUED SUPPORT AND TO ALL OF THE VOLUNTEERS AT EAST MIDLANDS AEROPARK.</span>
+          <span>FOR MORE DETAILS ABOUT THE AEROPARK, SEE THEIR WEBSITE IN OUR STREAM DESCRIPTION BELOW.</span>
         </div>
       </div>
     </div>
@@ -160,14 +184,9 @@ AND DON’T FORGET TO FOLLOW @LIVEFLIGHTACTION ON TIKTOK, INSTAGRAM & FACEBOOK F
           document.getElementById('wind-speed').innerText = windSpeed;
           document.getElementById('visibility').innerText = `${visibilityMiles} mi`;
 
-          // Arrow rotation
+          // Rotate arrow (pointing from where wind is coming)
           const adjustedDirection = (windDeg + 180) % 360;
           document.getElementById('direction-arrow').style.transform = `rotate(${adjustedDirection}deg)`;
-
-          // Convert to compass direction
-          const compassDirections = ['N','NE','E','SE','S','SW','W','NW'];
-          const index = Math.round(windDeg / 45) % 8;
-          document.getElementById('wind-dir').innerText = compassDirections[index];
         } else {
           showError();
         }
@@ -177,7 +196,7 @@ AND DON’T FORGET TO FOLLOW @LIVEFLIGHTACTION ON TIKTOK, INSTAGRAM & FACEBOOK F
     }
 
     function showError() {
-      const fields = ['temp','feels-like','weather-icon','wind-speed','wind-dir','visibility'];
+      const fields = ['temp','feels-like','weather-icon','wind-speed','visibility'];
       fields.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerText = 'N/A';
