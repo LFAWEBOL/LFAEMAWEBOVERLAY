@@ -114,9 +114,12 @@
 .highlight-subscribe {
   background-color: red;
   color: white;
-  padding: 2px 12px; /* left/right = space for ~3 characters */
+  padding: 2px 0.6em;          /* vertical: 2px, horizontal: ~1.5 characters */
   border-radius: 4px;
   display: inline-block;
+  font-weight: bold;
+  line-height: 1;              /* keeps it tight, avoids clipping */
+  vertical-align: middle;      /* aligns better with surrounding text */
 }
     .scrolling-banner span {
       margin-right: 40px;
